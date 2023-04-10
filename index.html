@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-gap: 10px;
+        }
+      
+        .grid-item {
+          width: calc(100% / 3 - 10px);
+        }
+      
+        .grid-item img {
+          width: 100%;
+          height: auto;
+        }
+      </style>
+      
+    
+    <title>Document</title>
+</head>
+<body>
+    
+<!-- HTML for the gallery -->
+<div class="grid">
+    <div class="grid-sizer"></div>
+    <div class="grid-item"><img src="./images/image_1.jpg"></div>
+    <div class="grid-item"><img src="./images/image_2.jpg"></div>
+    <div class="grid-item"><img src="./images/image_3.jpg"></div>
+    <div class="grid-item"><img src="./images/image_4.jpg"></div>
+</div>
+  
+<!-- Include necessary JavaScript files here -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+<script>
+    // Initialize Masonry library
+    var grid = document.querySelector('.grid');
+    var masonry = new Masonry(grid, {
+      itemSelector: '.grid-item',
+      columnWidth: '.grid-sizer',
+      percentPosition: true
+    });
+  
+    // Generate and append new images to the grid
+    var counter = 1;
+    var intervalId = setInterval(function() {
+      var div = document.createElement('div');
+      div.classList.add('grid-item');
+  
+      var img = document.createElement('img');
+      img.addEventListener('load', function() {
+        masonry.appended(div);
+      });
+      img.setAttribute('src', './images/image_' + counter + '.jpg');
+      div.appendChild(img);
+  
+      grid.appendChild(div);
+  
+      counter++;
+      if (counter > 4) {
+        counter = 1;
+      }
+    }, 100);
+  </script>
+  
+  
+</body>
+</html>
