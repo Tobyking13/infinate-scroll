@@ -40,69 +40,93 @@
 
       
     </style>
+   
 
+<!-- <script src="./js/AnimOnScroll.js"></script> -->
     <title>Document</title>
   </head>
   <body>
-    <!-- HTML for the gallery -->
-    <div class="grid">
-      <div class="grid-sizer"></div>
-      <div class="grid-item"><img src="./images/image_1.jpg"></div>
-      <div class="grid-item"><img src="./images/image_2.jpg"></div>
-      <div class="grid-item"><img src="./images/image_3.jpg"></div>
-      <div class="grid-item"><img src="./images/image_4.jpg"></div>
-    </div>
+<!-- HTML for the gallery -->
+<div class="grid">
+    <div class="grid-sizer"></div>
+    <div class="grid-item aos-item" data-aos="fade-up"><img src="./images/image_1.jpg" class="aos-init"></div>
+    <div class="grid-item aos-item" data-aos="fade-up"><img src="./images/image_2.jpg" class="aos-init"></div>
+    <div class="grid-item aos-item" data-aos="fade-up"><img src="./images/image_3.jpg" class="aos-init"></div>
+    <div class="grid-item aos-item" data-aos="fade-up"><img src="./images/image_4.jpg" class="aos-init"></div>
+</div>
+
+  
 
     <!-- Include necessary JavaScript files here -->
+
+
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-      // Initialize Masonry library
-      var grid = document.querySelector(".grid");
-      var masonry = new Masonry(grid, {
-        itemSelector: ".grid-item",
-        columnWidth: ".grid-sizer",
-        percentPosition: true,
+     // Initialize Masonry library
+var grid = document.querySelector(".grid");
+var masonry = new Masonry(grid, {
+  itemSelector: ".grid-item",
+  columnWidth: ".grid-sizer",
+  percentPosition: true,
+});
+
+// Generate and append new images to the grid
+var counter = 1;
+var isLoading = false;
+
+window.addEventListener("scroll", function () {
+  if (!isLoading && isScrolledToBottom()) {
+    isLoading = true;
+    console.log("loading new images...");
+    var intervalId = setInterval(function () {
+      var div = document.createElement("div");
+      div.classList.add("grid-item");
+
+      var img = document.createElement("img");
+      img.addEventListener("load", function () {
+        masonry.appended(div);
+        isLoading = false;
       });
+      img.setAttribute("src", "./images/image_" + counter + ".jpg");
+      img.setAttribute("width", "100%");
+      img.setAttribute("height", "100%");
+      div.appendChild(img);
 
-      // Generate and append new images to the grid
-      var counter = 1;
-      var isLoading = false;
+      grid.appendChild(div);
 
-      window.addEventListener("scroll", function () {
-        if (!isLoading && isScrolledToBottom()) {
-          isLoading = true;
-          var intervalId = setInterval(function () {
-            var div = document.createElement("div");
-            div.classList.add("grid-item");
+      console.log("appended new image: " + img.getAttribute("src"));
 
-            var img = document.createElement("img");
-            img.addEventListener("load", function () {
-              masonry.appended(div);
-              isLoading = false;
-            });
-            img.setAttribute("src", "./images/image_" + counter + ".jpg");
-            div.appendChild(img);
-
-            grid.appendChild(div);
-
-            counter++;
-            if (counter > 4) {
-              counter = 1;
-            }
-
-            if (!isScrolledToBottom()) {
-              clearInterval(intervalId);
-            }
-          }, 50);
-        }
-      });
-
-      function isScrolledToBottom() {
-        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-        var clientHeight = document.documentElement.clientHeight || window.innerHeight;
-        return scrollTop + clientHeight >= scrollHeight;
+      counter++;
+      if (counter > 4) {
+        counter = 1;
       }
+
+      if (!isScrolledToBottom()) {
+        clearInterval(intervalId);
+      }
+    }, 50);
+  }
+});
+
+function isScrolledToBottom() {
+  var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+  var clientHeight = document.documentElement.clientHeight || window.innerHeight;
+  console.log("scrollTop: " + scrollTop);
+  console.log("scrollHeight: " + scrollHeight);
+  console.log("clientHeight: " + clientHeight);
+  return scrollTop + clientHeight >= scrollHeight;
+}
+
+AOS.init({
+  duration: 1000,
+  easing: 'ease-in-out',
+  once: true
+});
+
     </script>
   </body>
 </html>
