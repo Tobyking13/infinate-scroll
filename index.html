@@ -1,73 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        .grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-gap: 10px;
-        }
-      
-        .grid-item {
-          width: calc(100% / 3 - 10px);
-        }
-      
-        .grid-item img {
-          width: 100%;
-          height: auto;
-        }
-      </style>
-      
-    
-    <title>Document</title>
-</head>
-<body>
-    
-<!-- HTML for the gallery -->
-<div class="grid">
-    <div class="grid-sizer"></div>
-    <div class="grid-item"><img src="./images/image_1.jpg"></div>
-    <div class="grid-item"><img src="./images/image_2.jpg"></div>
-    <div class="grid-item"><img src="./images/image_3.jpg"></div>
-    <div class="grid-item"><img src="./images/image_4.jpg"></div>
-</div>
-  
-<!-- Include necessary JavaScript files here -->
-<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
-<script>
-    // Initialize Masonry library
-    var grid = document.querySelector('.grid');
-    var masonry = new Masonry(grid, {
-      itemSelector: '.grid-item',
-      columnWidth: '.grid-sizer',
-      percentPosition: true
-    });
-  
-    // Generate and append new images to the grid
-    var counter = 1;
-    var intervalId = setInterval(function() {
-      var div = document.createElement('div');
-      div.classList.add('grid-item');
-  
-      var img = document.createElement('img');
-      img.addEventListener('load', function() {
-        masonry.appended(div);
-      });
-      img.setAttribute('src', './images/image_' + counter + '.jpg');
-      div.appendChild(img);
-  
-      grid.appendChild(div);
-  
-      counter++;
-      if (counter > 4) {
-        counter = 1;
+      body {
+        overflow-y: scroll;
       }
-    }, 100);
-  </script>
-  
-  
-</body>
+      html,
+      body {
+        height: 100%;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+      }
+
+      .grid-item {
+        width: calc(100% / 3 - 10px);
+      }
+
+      .grid-item img {
+        width: 100%;
+        height: auto;
+      }
+
+      @media only screen and (max-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(1, 1fr);
+        }
+
+        .grid-item {
+          width: 100%;
+        }
+      }
+
+      
+    </style>
+
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- HTML for the gallery -->
+    <div class="grid">
+      <div class="grid-sizer"></div>
+      <div class="grid-item"><img src="./images/image_1.jpg"></div>
+      <div class="grid-item"><img src="./images/image_2.jpg"></div>
+      <div class="grid-item"><img src="./images/image_3.jpg"></div>
+      <div class="grid-item"><img src="./images/image_4.jpg"></div>
+    </div>
+
+    <!-- Include necessary JavaScript files here -->
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+    <script>
+      // Initialize Masonry library
+      var grid = document.querySelector(".grid");
+      var masonry = new Masonry(grid, {
+        itemSelector: ".grid-item",
+        columnWidth: ".grid-sizer",
+        percentPosition: true,
+      });
+
+      // Generate and append new images to the grid
+      var counter = 1;
+      var isLoading = false;
+
+      window.addEventListener("scroll", function () {
+        if (!isLoading && isScrolledToBottom()) {
+          isLoading = true;
+          var intervalId = setInterval(function () {
+            var div = document.createElement("div");
+            div.classList.add("grid-item");
+
+            var img = document.createElement("img");
+            img.addEventListener("load", function () {
+              masonry.appended(div);
+              isLoading = false;
+            });
+            img.setAttribute("src", "./images/image_" + counter + ".jpg");
+            div.appendChild(img);
+
+            grid.appendChild(div);
+
+            counter++;
+            if (counter > 4) {
+              counter = 1;
+            }
+
+            if (!isScrolledToBottom()) {
+              clearInterval(intervalId);
+            }
+          }, 50);
+        }
+      });
+
+      function isScrolledToBottom() {
+        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+        var clientHeight = document.documentElement.clientHeight || window.innerHeight;
+        return scrollTop + clientHeight >= scrollHeight;
+      }
+    </script>
+  </body>
 </html>
